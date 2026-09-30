@@ -37,6 +37,11 @@ static IRAM_ATTR esp_err_t start(void *arg, uint32_t flags)
 static IRAM_ATTR esp_err_t end(void *arg)
 {
 #if CONFIG_IDF_TARGET_ESP32
+    /* A fill cut short by Cache_Read_Disable() can leave a line marked valid:
+     * invalidate before re-enabling, as the ROM flash routines do.
+     */
+    Cache_Flush(0);
+    Cache_Flush(1);
     Cache_Read_Enable(0);
     Cache_Read_Enable(1);
 #else
